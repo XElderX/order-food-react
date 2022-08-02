@@ -1,0 +1,22 @@
+.register{
+    display:flex;
+    justify-content:center;
+}
+
+.register>form{
+    width:30%;
+    padding:1rem;
+    background: rgba( 203, 65, 84, 0.4 );
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 6px );
+    -webkit-backdrop-filter: blur( 6px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+    
+
+   
+}
+.headline:first-child{
+    text-align:center;
+    margin: 1rem;
+}
