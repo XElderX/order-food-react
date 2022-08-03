@@ -68,8 +68,13 @@ const Dishes = () => {
     const handleSubmit = event => {
         event.preventDefault();
         console.log(event.target.menu_id.value)
+        console.log(event.target.dish_name.value)
+        console.log(event.target.description.value)
+        console.log(event.target.price.value)
+        console.log(event.target.foto_url.value)
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/dishes", {
             method: 'POST',
+            headers: h,
        
             body: JSON.stringify(
                 {
@@ -212,11 +217,11 @@ const Dishes = () => {
                                 <form onSubmit={handleUpdateSubmit}>
 
                                     <div className="form-group">
-                                        <label>Restourant Title: </label>
+                                        <label>Menu Title: </label>
                                         <select name="menu_id" id="" className="form-control">
 
-                                            {menus.map(menu => (((currentDish.restourant_id) === (menu.id))
-                                                ? <option key={menu.id} value={currentDish.restourant_id} selected>{menu.menu_title}</option>
+                                            {menus.map(menu => (((currentDish.menu_id) === (menu.id))
+                                                ? <option key={menu.id} value={currentDish.menu_id} selected>{menu.menu_title}</option>
                                                 : <option key={menu.id} value={menu.id}>{menu.menu_title}</option>)
                                             )}
                                         </select>
@@ -284,11 +289,11 @@ const Dishes = () => {
                                     <form onSubmit={handleSubmit}>
 
                                         <div className="form-group">
-                                            <label>Restourant Title: </label>
+                                            <label>Menu Title: </label>
 
 
                                             <select name="menu_id" id="" className="form-control">
-                                                <option value="" disabled>Select Restourant</option>
+                                                <option value="" disabled>Select Menu</option>
                                                 {menus.map(menu => (
                                                     <option key={menu.id} value={menu.id}>{menu.menu_title}</option>)
                                                 )}

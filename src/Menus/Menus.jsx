@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import Dish from "./Dish";
 
 const Menus = () => {
-   
+
     const [error, setError] = useState(null);
     const [newReview, setNewReview] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -13,16 +15,18 @@ const Menus = () => {
     const [currentMenu, setCurrentMenu] = useState([]);
     const [errorMsg, setErrorMsg] = useState('');
     const [hideDishes, setHideDishes] = useState(false);
-    const [reviews, setReviews] = useState([]);
-    const [reviewId, setReviewId] = useState('');
+    const [menuDishes, setMenuDishes] = useState([]);
+    const [menuId, setMenuId] = useState('');
+    const [currentMenuDish, setCurrentMenuDish] = useState([]);
+
     const [token, _] = useState(localStorage.getItem("token"));
-    {/* const nav = useNavigate();
-    let h = { 'Accept': 'application/json', "Authorization": `Bearer ${token}` }; */}
+    const nav = useNavigate();
+    let h = { 'Accept': 'application/json', "Authorization": `Bearer ${token}` };
 
 
     useEffect(() => {
-        // if (!token) return nav("/login");
-        fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu", )
+        if (!token) return nav("/login");
+        fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu",)
             .then(res => {
                 if (!res.ok) {
                     console.log(res);
@@ -36,7 +40,7 @@ const Menus = () => {
                     setMenus(result); setIsLoaded(true); setReRender(false);
                 },
                 (error) => { setError(error); setIsLoaded(true); })
-    }, [reRender, showHide])
+    }, [reRender])
 
     useEffect(() => {
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/restourants", { method: 'GET' })
@@ -56,9 +60,9 @@ const Menus = () => {
                 (error) => { setError(error); setIsLoaded(true); })
     }, [])
 
-    
+
     function deleteMenu(id, e) {
-        fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu/" + id, { method: 'DELETE'})
+        fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu/" + id, { method: 'DELETE' })
             .then((response) => {
                 // console.log(response);
                 if (response.status === 200) {
@@ -67,10 +71,10 @@ const Menus = () => {
                 }
             });
     }
-    
+
     const handleSubmit = event => {
         event.preventDefault();
-      
+
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu", {
             method: 'POST',
             headers: {
@@ -81,7 +85,7 @@ const Menus = () => {
                 {
                     "restourant_id": event.target.restourant_id.value,
                     "menu_title": event.target.menu_title.value
-                   
+
                 }
             )
         }).then(response => {
@@ -103,21 +107,22 @@ const Menus = () => {
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/menu/" + currentMenu.id, {
             method: 'PUT',
             headers: {
-    
-                'Content-Type': 'application/json'
+                Accept: 'application/json',
+                'Content-Type': 'application/json ', "Authorization": `Bearer ${token}`
             },
             body: JSON.stringify(
                 {
                     "menu_title": event.target.menu_title.value,
                     "restourant_id": event.target.restourant_id.value
-                   
+
                 }
             )
         }).then(response => {
             console.log(response)
 
             if (response.status === 200) {
-                setReRender(true);
+                setEditMode(false)
+                setReRender(!reRender);
 
             }
         })
@@ -153,6 +158,36 @@ const Menus = () => {
         else setEditMode(false);
         // console.log('>>>>editw')
     }
+    function showAllDishes(id, e) {
+        fetch("https://examorderfoodapp.herokuapp.com/api/v1/dishes/menu/" + id, { method: 'GET', headers: h })
+            .then(res => {
+                if (!res.ok) {
+                    console.log(res);
+                    setError(res);
+                    setIsLoaded(true);
+                } else {
+                    return res.json()
+                }
+            }).then(
+                (result) => {
+                    setMenuDishes(result);
+                    setMenuId(id);
+                    setHideDishes(true);
+
+                }
+            )
+    }
+    function editMenuDish(id, e) {
+        fetch("https://examorderfoodapp.herokuapp.com/api/v1/dishes/menu/" + id, { method: 'GET', headers: h })
+            .then(res => res.json())
+            .then(
+                (result) => {
+                    console.log(result);
+                    setCurrentMenuDish(result); setIsLoaded(true); setEditMode(true);
+
+                },
+                (error) => { setError(error); setIsLoaded(true); });
+    }
 
     function functionShowHide() {
         if (showHide === false) {
@@ -165,59 +200,6 @@ const Menus = () => {
         }
     }
 
-    const reviewHandleSubmit = event => {
-
-        event.preventDefault();
-        fetch("http://127.0.0.1:8000/api/v1/reviews/", {
-            method: 'POST',
-            // headers: h,
-            body: JSON.stringify(
-                {
-                    "dish_id": event.target.dish_id.value,
-                    "author": event.target.author.value,
-                    "rate": event.target.rate.value,
-                    "comment": event.target.comment.value
-                }
-            )
-        }).then(response => {
-
-            console.log(response)
-
-            if (response.status === 201) {
-                setShowHide(false);
-                setReRender(true);
-                setHideDishes(false);
-                setNewReview(!newReview)
-               
-            }
-        })
-            .catch(error => {
-                console.log(error)
-            })
-    }
-
-
- 
-
-    function showReviews(id, e) {
-        fetch("http://127.0.0.1:8000/api/v1/reviews/all/" + id, { method: 'GET'})
-            .then(res => {
-                if (!res.ok) {
-                    console.log(res);
-                    setError(res);
-                    setIsLoaded(true);
-                } else {
-                    return res.json()
-                }
-            }).then(
-                (result) => {
-                    setReviews(result);
-                    setReviewId(id);
-                    setHideDishes(true);
-
-                }
-            )
-    }
 
     if (!isLoaded) {
         return <div>Loading...</div>;
@@ -225,85 +207,52 @@ const Menus = () => {
         return <div>Error: {error.message}</div>;
     } else {
         return (<>
-            {/* <div style={hideDishes === true ? { display: 'block' } : { display: 'none' }} className='container'>
+            <div style={hideDishes === true ? { display: 'block' } : { display: 'none' }} className='container'>
                 <button className="btn btn-primary" onClick={(e) => functionShowHide(e)}> {showHide === false ? 'Add new Review' : 'Hide'}  </button>
+            </div>
 
-                <div>
-                    <div style={showHide === true ? { display: 'block' } : { display: 'none' }}>
-                        <div className="row justify-content-center">
-                            <div className="col-md-8">
-                                <div className="card">
-                                    <div className="card-header">A New Review:</div>
-                                    <div className="card-body">
-                                        <form onSubmit={reviewHandleSubmit}>
-                                            <div className="form-group">
+            <h3>Restourants</h3>
+            <div className='container'>
+                <table className='table'>
+                    <thead>
+                        <tr>
+                            <th>Menu</th>
+                            <th>Dish title</th>
+                            <th>Description</th>
+                            <th>Price</th>
+                            <th>Foto</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {menuDishes?.length > 0 ? (menuDishes.map(dish => (
+                            <Dish key={dish.id}
+                                id={dish.id}
+                                menu_id={dish.menu_id}
+                                dish_name={dish.dish_name}
+                                description={dish.description}
+                                price={dish.price}
+                                foto_url={dish.foto_url}
+                                error={error}
+                                setError={setError}
+                                menuDishes={menuDishes}
+                                setMenuDishes={setMenuDishes}
+                                editMenuDish={editMenuDish}
+                                editMode={editMode}
+                                showHide={showHide}
 
-                                                <input
-                                                    type="hidden"
-                                                    name="dish_id"
-                                                    value={reviewId}
 
-                                                />
-                                            </div>
+                            />
 
-                                            <div className="form-group">
-                                                <label>Review author: <b>{localStorage.getItem("username")}</b> </label>
-                                                <input type="hidden"
-                                                    value={localStorage.getItem("username")}
-                                                    name="author"
-                                                    className="form-control"
-                                                />
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Rating: </label>
-                                                <select name="rate" id="rate" className="form-control" >
-                                                    <option value="">--How do you liked it?--</option>
-                                                    <option value="1">1</option>
-                                                    <option value="2">2</option>
-                                                    <option value="3">3</option>
-                                                    <option value="4">4</option>
-                                                    <option value="5">5</option>
-                                                    <option value="6">6</option>
-                                                    <option value="7">7</option>
-                                                    <option value="8">8</option>
-                                                    <option value="9">9</option>
-                                                    <option value="10">10</option>
-                                                </select>
-                                            </div>
-                                            <div className="form-group">
-                                                <label>Comment : </label>
-                                                <input type="text"
-                                                    name="comment"
-                                                    className="form-control"
-                                                />
-                                            </div>
-                                            <button type="submit"
-                                                className="btn btn-primary">Submit</button>
-                                        </form>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                {reviews?.length > 0 ? (reviews.map(review => (
-                    <div className={styles.reviewItemContainer} key={review.id}>
-                        <div className={styles.reviewItem}><b>Review of :</b> <u>{review.dish.dish_name}</u></div>
-                        <div className={styles.reviewItem}><b>Reviewed by:</b> {review.author}</div>
-                        <div className={styles.reviewItem}><b>Commented:</b> {review.comment}</div>
-                        <div className={styles.reviewItem}><b>Rated as:</b> {review.rate} of 10</div>
-                        <div className={styles.reviewItem}><b>Posted at:</b> {review.created_at.replace('T', " ",).slice(0, 16)}</div>
-                        <div style={((localStorage.getItem("username") === (review.author)) || (JSON.parse(localStorage.getItem("admin"))) === 1) ? { display: 'block' } : { display: 'none' }} className={styles.reviewItem}> <button onClick={(e) => deleteReview(review.id, e)} className="btn btn-dark">Delete</button></div>
-
-                        <br></br>
-                    </div>
-                ))
-                ) : (
-                    <div className={styles.dishes}> This dish haven't had any reviews yet </div>
-                )}
+                        ))
+                        ) : (
+                            <tr> <td>This menu haven't had any dishes yet </td></tr>
+                        )}
+                    </tbody>
+                </table>
 
                 <button onClick={(e) => setHideDishes(false)} className="btn btn-dark">Go back</button>
-            </div> */}
+            </div>
+
 
             <div style={hideDishes === false ? { display: 'block' } : { display: 'none' }} className="container">
                 <table className="table">
@@ -320,16 +269,14 @@ const Menus = () => {
                                 <td>{menu.restourant.title}</td>
                                 <td>{menu.menu_title}</td>
                                 <td>
-                                    
-
-                                    {/* <button onClick={(e) => showDishes(dish.id, e)} className="btn btn-dark">View dishes of menu</button> */}
+                                    <button onClick={(e) => showAllDishes(menu.id, e)} className="btn btn-dark">View dishes of menu</button>
 
                                 </td>
                                 <td>
-                                    <button style={editMode === false && showHide === false 
+                                    <button style={editMode === false && showHide === false
                                         // && JSON.parse(localStorage.getItem("admin")) === 1 
                                         ? { display: 'block' } : { display: 'none' }} onClick={(e) => deleteMenu(menu.id, e)} className="btn btn-dark">Delete</button>
-                                    <button style={editMode === false && showHide === false 
+                                    <button style={editMode === false && showHide === false
                                         // && JSON.parse(localStorage.getItem("admin")) === 1 
                                         ? { display: 'block' } : { display: 'none' }} onClick={(e) => functionEditBtn(menu.id, e)} className="btn btn-dark">Edit</button>
                                 </td>
@@ -337,7 +284,7 @@ const Menus = () => {
                         )}
                     </tbody>
                 </table>
-                <div className='text-danger'>{errorMsg}</div>
+
 
                 <div style={editMode === true ? { display: 'block' } : { display: 'none' }}>
                     <div className="row justify-content-center">
@@ -371,7 +318,7 @@ const Menus = () => {
 
 
                                     </div>
-                      
+
 
                                     <button onClick={(e) => setEditMode(false) && setCurrentMenu([])} type="submit" className="btn btn-dark">Update</button>
                                 </form>
@@ -381,7 +328,7 @@ const Menus = () => {
                     </div>
                 </div>
 
-                <button  className="btn btn-primary" onClick={(e) => functionShowHide(e)}> {showHide === false ? 'Add new Dish' : 'Hide'}  </button>
+                <button className="btn btn-primary" onClick={(e) => functionShowHide(e)}> {showHide === false ? 'Add new Dish' : 'Hide'}  </button>
                 <div style={showHide === true ? { display: 'block' } : { display: 'none' }}>
                     <div className="row justify-content-center">
                         <div className="col-md-8">
@@ -398,9 +345,9 @@ const Menus = () => {
                                             <select name="restourant_id" id="" className="form-control">
                                                 <option value="" disabled>Select Restourant</option>
                                                 {restourants.map(restourant => (((currentMenu.restourant_id) === (restourant.id))
-                                                ? <option key={restourant.id} value={currentMenu.restourant_id} selected>{restourant.title}</option>
-                                                : <option key={restourant.id} value={restourant.id}>{restourant.title}</option>)
-                                            )}
+                                                    ? <option key={restourant.id} value={currentMenu.restourant_id} selected>{restourant.title}</option>
+                                                    : <option key={restourant.id} value={restourant.id}>{restourant.title}</option>)
+                                                )}
                                             </select>
                                         </div>
 
@@ -411,7 +358,7 @@ const Menus = () => {
                                                 className="form-control"
                                             />
                                         </div>
-                                       
+
                                         <button type="submit"
                                             className="btn btn-primary">Submit</button>
                                     </form>
@@ -426,7 +373,7 @@ const Menus = () => {
         </>
         );
     }
-    
+
 }
- 
+
 export default Menus;

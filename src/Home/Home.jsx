@@ -3,11 +3,11 @@ import { Link } from 'react-router-dom';
 
 
 
-function Home() {
+function Home({ logedIn }) {
 
     return (
         <>
-            <div className="container">
+            <div style={(logedIn) ? { display: 'none' } : { display: 'block' }} className="container">
                 <p style={{ display: 'inline' }}>Welcome to restourant review App!</p>
 
                 <div className="container">
