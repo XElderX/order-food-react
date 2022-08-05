@@ -13,6 +13,7 @@ const Dishes = () => {
     const [currentDish, setCurrentDish] = useState([]);
     const [errorMsg, setErrorMsg] = useState('');
     const [hideDishes, setHideDishes] = useState(false);
+    
 
     // const [token, _] = useState(localStorage.getItem("token"));
     // const nav = useNavigate();

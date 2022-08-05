@@ -72,6 +72,7 @@ const CreateRestourant = ({showHide, h, setShowHide, setReRender, reRender}) => 
                 <button type="submit"
                     className="btn btn-primary">Submit</button>
             </form>
+            <button onClick={(e) => setShowHide(false)} className="btn btn-dark">Cancel</button>
         </div>
     </div>
 </div>

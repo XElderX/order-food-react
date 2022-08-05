@@ -77,6 +77,7 @@ const Restourants = () => {
                             <th>Restourant Title</th>
                             <th>Code</th>
                             <th>Address</th>
+                            <th style={editMode === false && showHide!==true ? { display: 'block' } : { display: 'none' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
