@@ -27,11 +27,13 @@ export default function Login({setLogedIn}) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         const loginInfo = await loginUser({ email, password });
+        console.log(loginInfo);
        
         setToken(loginInfo["authorisation"]["token"]);
         localStorage.setItem('token', loginInfo["authorisation"]["token"]);
         localStorage.setItem('username', loginInfo["user"]["name"]);
         localStorage.setItem('admin', loginInfo["user"]["admin"]);
+        localStorage.setItem('user_id', loginInfo["user"]["id"]);
         setLogedIn(true);
         
         

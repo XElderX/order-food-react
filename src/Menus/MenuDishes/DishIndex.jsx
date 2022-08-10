@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-const Dish = ({id, menu_title, dish_name, description, price, foto_url, error, setError, menuDishes, setMenuDishes, editMode, showHide, setCurrentMenuDish, setIsLoaded, setEditMode}) => {
+const DishIndex = ({id, menu_title, dish_name, description, price, foto_url, error, setError, menuDishes, setMenuDishes, editMode, showHide, setCurrentMenuDish, setIsLoaded, setEditMode, addIntoCart}) => {
     const [token, _] = useState(localStorage.getItem("token"));
-    const [sort, setSort] = useState(null);
+
+    
 
     let h = { 'Accept': 'application/json', "Authorization": `Bearer ${token}` };
     function editMenuDish(id, e) {
@@ -28,10 +29,11 @@ const Dish = ({id, menu_title, dish_name, description, price, foto_url, error, s
                 }
             });
     }
+
+  
+  
     
 
-
- 
     return ( 
         
         <tr> 
@@ -42,10 +44,10 @@ const Dish = ({id, menu_title, dish_name, description, price, foto_url, error, s
             <td><img style={{ width: '200px' }} className="photo" src={foto_url}  alt="dish_foto"></img></td>
             <td><button style={editMode === false && showHide === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'inline' } : { display: 'none' }} onClick={(e) => deleteDish(id, e)} className="btn btn-dark mx-2">Delete</button>
                 <button style={editMode === false && showHide === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'inline' } : { display: 'none' }} onClick={(e) => {editMenuDish(id, e)}} className="btn btn-dark">Edit</button>
-                <button style={editMode === false && showHide === false ? { display: 'inline' } : { display: 'none' }} onClick={(e) => {editMenuDish(id, e)}} className="btn btn-dark">Order</button>
+                <button style={editMode === false && showHide === false ? { display: 'inline' } : { display: 'none' }} onClick={(e) => {addIntoCart(id, e)}} className="btn btn-dark">Order</button>
             </td>
         </tr>
      );
 }
  
-export default Dish;
+export default DishIndex;

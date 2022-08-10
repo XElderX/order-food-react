@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Dish from "./MenuDishes/Dish";
+
 import Menu from "./Menu/Menu";
 import CreateMenuDish from "./MenuDishes/CreateMenuDish";
 import EditMenuDish from "./MenuDishes/EditMenuDish";
+import DishIndex from "./MenuDishes/DishIndex";
+import Loader from "../Loader/Loader";
 
-const Menus = () => {
+const Menus = ({addIntoCart}) => {
 
     const [error, setError] = useState(null);
 
@@ -22,6 +24,7 @@ const Menus = () => {
     const [menuId, setMenuId] = useState('');
     const [currentMenuDish, setCurrentMenuDish] = useState("");
     const [sort, setSort] = useState(null);
+
 
 
     const [defaultMenuDishes, setDefaultMenuDishes] = useState([]);
@@ -49,6 +52,7 @@ const Menus = () => {
                 (error) => { setError(error); setIsLoaded(true); })
     }, [reRender])
 
+   
     
 
 
@@ -115,7 +119,7 @@ const Menus = () => {
 
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <div>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     } else {
@@ -140,7 +144,7 @@ const Menus = () => {
                     </thead>
                     <tbody>
                         {menuDishes?.length > 0 ? (menuDishes.map(dish => (
-                            <Dish key={dish.id}
+                            <DishIndex key={dish.id}
                                 id={dish.id}
                                 menu_title={dish.menu.menu_title}
                                 dish_name={dish.dish_name}
@@ -156,6 +160,7 @@ const Menus = () => {
                                 setCurrentMenuDish={setCurrentMenuDish}
                                 setIsLoaded={setIsLoaded}
                                 setEditMode={setEditMode}
+                                addIntoCart={addIntoCart}
                             />
 
                         ))

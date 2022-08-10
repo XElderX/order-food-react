@@ -1,15 +1,22 @@
 import { NavLink, useNavigate } from "react-router-dom";
+import cartLogo from '../assets/shopping-cart.svg';
+import logoutSvg from '../assets/logout.svg';
 
 
-const Header = ({logedIn, setLogedIn, setAdmin}) => {
+
+
+const Header = ({logedIn, setLogedIn, setAdmin, setCart}) => {
     const nav = useNavigate();
 
 
     const logout = event => {
         event.preventDefault();
-        localStorage.removeItem('token');
-        localStorage.removeItem('username');
-        localStorage.removeItem('admin');
+        // localStorage.removeItem('token');
+        // localStorage.removeItem('username');
+        // localStorage.removeItem('admin');
+
+        localStorage.clear()
+        setCart([]);
         setLogedIn(false);
         setAdmin(false);
         return nav("/home");
@@ -32,12 +39,16 @@ const Header = ({logedIn, setLogedIn, setAdmin}) => {
         </ul>
 
     </div>
-    <div style={(logedIn) ? { display: 'block' } : { display: 'none' }}>
-
-                <h3 style={{ margin: "1rem" }}>Welcome, {localStorage.getItem("username")}</h3>
-
-                <button style={{ float: "right", marginRight: "1rem" }} className="logout" onClick={(e) => logout(e)}>Logout </button>
-            </div>
+    <div style={(logedIn) ? { display: 'flex' } : { display: 'none' }}>
+    
+                <h3 style={{ margin: "0.1rem 1rem 0 0" }}>Welcome, {localStorage.getItem("username")}</h3>
+              
+                <ul className="navbar-nav">
+                    
+                    <li style={{ margin: "2rem 1rem 0 0" }} className="nav-item"><NavLink className={({ isActive }) => (isActive ? "nav-link text-danger active" : "nav-link ")} to="/cart"> <img style={{ width: '25px' }} src={cartLogo} alt='cart'></img> Your Cart </NavLink></li>
+                </ul>
+                <button style={{margin: "1rem 1rem" }} className="logout" onClick={(e) => logout(e)}><img style={{ width: '25px' }} src={logoutSvg} alt='logout'></img> Logout </button>
+    </div>
     
 </nav> );
 }

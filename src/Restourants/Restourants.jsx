@@ -62,7 +62,7 @@ const Restourants = () => {
     }
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <div>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     }

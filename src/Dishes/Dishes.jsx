@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import Loader from "../Loader/Loader";
 
-const Dishes = () => {
+const Dishes = ({dishes, setDishes}) => {
    
     const [error, setError] = useState(null);
 
     const [isLoaded, setIsLoaded] = useState(false);
-    const [dishes, setDishes] = useState([]);
+    
     const [editMode, setEditMode] = useState(false);
     const [menus, setMenus] = useState([]);
     const [showHide, setShowHide] = useState(false);
@@ -33,6 +34,7 @@ const Dishes = () => {
                 }
             }).then(
                 (result) => {
+                    console.log(result)
                     setDishes(result); setIsLoaded(true); setReRender(false);
                 },
                 (error) => { setError(error); setIsLoaded(true); })
@@ -170,7 +172,7 @@ const Dishes = () => {
 
 
     if (!isLoaded) {
-        return <div>Loading...</div>;
+        return <div>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     } else {

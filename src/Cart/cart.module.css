@@ -1,0 +1,40 @@
+.cartItem{
+    display: flex;
+    flex-direction: row-reverse;
+    align-content: center;
+    align-items: center;
+    margin: 5% 5% 0 50%;
+
+    background: rgb(196,174,173, 0.85);
+    box-shadow: 0 8px 32px 0 rgba( 31, 38, 135, 0.37 );
+    backdrop-filter: blur( 13.5px );
+    -webkit-backdrop-filter: blur( 13.5px );
+    border-radius: 10px;
+    border: 1px solid rgba( 255, 255, 255, 0.18 );
+   
+}
+.rightCard, .leftCard {
+    display:flex;
+    flex-direction: column;
+    margin-right:10%;
+    min-width:20rem;
+}
+.leftCard {
+    padding: 3rem;
+    border-right: 1px solid #004953;
+}
+.note{
+    background-color: rgb(203,65,84, 0.5);
+    padding:0.5rem;
+    border-radius: 10px;
+    margin-right:2rem;
+}
+
+
+.totalAmount{
+    margin:0.5rem 0 0.5rem 0;
+    
+   float:right;
+
+}
+
