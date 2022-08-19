@@ -1,9 +1,10 @@
 
 import { Link } from 'react-router-dom';
+import UserOrders from './UserOrders/UserOrders';
 
 
 
-function Home({ logedIn }) {
+function Home({ logedIn, dishes, setNotification, notification, setShow, show}) {
 
     return (
         <>
@@ -20,7 +21,12 @@ function Home({ logedIn }) {
                     </ul>
                 </div>
             </div>
-
+            <div style={(logedIn) ? { display: 'block' } : { display: 'none' }} className="container-fluid">
+                <div>
+                    <UserOrders
+                        dishes={dishes} />
+                </div>
+            </div>
         </>
     )
 };

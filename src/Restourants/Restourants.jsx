@@ -6,7 +6,7 @@ import CreateRestourant from "./CreateRestourant";
 import UpdateRestourant from "./UpdateRestourant";
 
 
-const Restourants = () => {
+const Restourants = ({ setNotification, notification, setShow, show }) => {
 
     const [error, setError] = useState(null);
     const [isLoaded, setIsLoaded] = useState(false);
@@ -41,7 +41,7 @@ const Restourants = () => {
                 },
                 (error) => { setError(error); setIsLoaded(true); })
     }, [reRender])
-    function show() {
+    function display() {
         (showHide === false)
             ? setShowHide(true)
             // console.log('>>>>show')
@@ -62,7 +62,7 @@ const Restourants = () => {
     }
 
     if (!isLoaded) {
-        return <div>Loading...<Loader /></div>;
+        return <div style={{ textAlign: 'center', margin: '20%' }}>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     }
@@ -70,6 +70,7 @@ const Restourants = () => {
 
         return (<>
             <h3>Restourants</h3>
+            <div style={show ? { display: 'block', margin: '0.5rem 1rem' } : { display: 'none' }} className={'alert alert-' + notification.status}><span>{notification.text}</span></div>
             <div className='container'>
                 <table className='table'>
                     <thead>
@@ -77,7 +78,7 @@ const Restourants = () => {
                             <th>Restourant Title</th>
                             <th>Code</th>
                             <th>Address</th>
-                            <th style={editMode === false && showHide!==true ? { display: 'block' } : { display: 'none' }}>Actions</th>
+                            <th style={editMode === false && JSON.parse(localStorage.getItem("admin")) === 1 && showHide !== true ? { display: 'block' } : { display: 'none' }}>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -94,6 +95,9 @@ const Restourants = () => {
                                 editRestourant={editRestourant}
                                 editMode={editMode}
                                 showHide={showHide}
+                                setNotification={setNotification}
+                                setShow={setShow}
+
 
                             />
                         ))
@@ -106,7 +110,7 @@ const Restourants = () => {
                         }
                     </tbody>
                 </table>
-                <button style={editMode === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'block' } : { display: 'none' }} className="btn btn-primary" onClick={(e) => show(e)}> {showHide === false ? 'Add new Restourant' : 'Hide'}  </button>
+                <button style={editMode === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'block' } : { display: 'none' }} className="btn btn-primary" onClick={(e) => display(e)}> {showHide === false ? 'Add new Restourant' : 'Hide'}  </button>
 
                 <CreateRestourant
                     showHide={showHide}
@@ -114,6 +118,8 @@ const Restourants = () => {
                     setShowHide={setShowHide}
                     setReRender={setReRender}
                     reRender={reRender}
+                    setNotification={setNotification}
+                    setShow={setShow}
                 />
             </div>
 
@@ -127,6 +133,8 @@ const Restourants = () => {
                     currentRestourant={currentRestourant}
                     setEditMode={setEditMode}
                     token={token}
+                    setNotification={setNotification}
+                    setShow={setShow}
 
                 />
 

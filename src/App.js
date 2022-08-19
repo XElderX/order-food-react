@@ -19,7 +19,13 @@ function App() {
   const [admin, setAdmin] = useState(JSON.parse(localStorage.getItem("admin")));
   const [dishes, setDishes] = useState([]);
   const [cart, setCart] = useState([]);
+
+
   const [show, setShow] = useState(false);
+  const [notification, setNotification] = useState({
+    text: '',
+    status: ''
+})
 
 
   useEffect(() => {
@@ -27,8 +33,8 @@ function App() {
     setTimeout(() => {
       setShow(false);
       console.log('timeout')
-    }, 3000);
-  }, [show]); 
+    }, 5000);
+  }, [show]);
 
 
 
@@ -40,7 +46,7 @@ function App() {
       setUser(localStorage.getItem("username"));
       console.log('setted');
       console.log(user);
-      console.log(typeof(logedIn))
+      console.log(typeof (logedIn))
     }
     (admin === false) ? setAdmin(false) : setAdmin(true);
 
@@ -54,66 +60,90 @@ function App() {
     let cartUpdate = JSON.stringify([...cart, id]);
     localStorage.setItem('cart', cartUpdate);
     setCart([...cart, id])
-
-
     // localStorage.setItem("cart", JSON.stringify(cart));
-
     // addToCart((cart) => [...cart, id])
     console.log(cart);
+  };
 
-
-
-   
-};
-  
   return (
-    
-       <BrowserRouter>
+
+    <BrowserRouter>
       <Header
-       logedIn={logedIn}
-       setLogedIn={setLogedIn}
-       token={token}
-       user={user}
-       admin={admin}
-       setAdmin={setAdmin}
-       setCart={setCart}
-       />
+        logedIn={logedIn}
+        setLogedIn={setLogedIn}
+        token={token}
+        user={user}
+        admin={admin}
+        setAdmin={setAdmin}
+        setCart={setCart}
+      />
       <Routes>
-      <Route exact path='/login' element={<Login
+        <Route exact path='/login' element={<Login
           logedIn={logedIn}
           setLogedIn={setLogedIn}
           token={token}
           user={user}
+          setNotification={setNotification}
+          notification={notification}
+         show={show}
+          setShow={setShow}
         />} />
-        <Route exact path='/register' element={<Register />} />
+        <Route exact path='/register' element={<Register 
+        setNotification={setNotification}
+        notification={notification}
+         show={show}
+          setShow={setShow}
+
+        />} />
         <Route exact path='/home' element={<Home
+          setNotification={setNotification}
+          notification={notification}
+          show={show}
+          setShow={setShow}
           logedIn={logedIn}
         />} />
-        <Route exact path='/home' element={<Home />}/>
         <Route exact path='/restourants' element={<Restourants
-         />}/>
+         setNotification={setNotification}
+         notification={notification}
+         show={show}
+        setShow={setShow}
+        />} />
         <Route exact path='/menus' element={<Menus
-        addIntoCart={addIntoCart}
-        
-        />}/>
+         setNotification={setNotification}
+         notification={notification}
+         show={show}
+          setShow={setShow}
+          addIntoCart={addIntoCart}
+
+        />} />
         <Route exact path='/dishes' element={<Dishes
-        dishes={dishes}
-        setDishes={setDishes}
-        
-        />}/>
-        <Route exact path='/orders' element={<Orders />}/>
+         setNotification={setNotification}
+         notification={notification}
+         show={show}
+          setShow={setShow}
+          dishes={dishes}
+          setDishes={setDishes}
+
+        />} />
+        <Route exact path='/orders' element={<Orders
+         setNotification={setNotification}
+         notification={notification}
+         show={show}
+          setShow={setShow} />} />
 
         <Route exact path='/cart' element={<Cart
-        cart={cart}
-        setCart={setCart}
-        token={token}
-        show={show}
-        setShow={setShow}
+          cart={cart}
+          setCart={setCart}
+          token={token}
+          setNotification={setNotification}
+          notification={notification}
+          show={show}
+          setShow={setShow}
 
-        
-        />}/>
+
+        />} />
       </Routes>
-      </BrowserRouter>
+    </BrowserRouter>
   );
 }
 

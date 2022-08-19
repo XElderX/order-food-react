@@ -1,14 +1,14 @@
 import React from 'react';
 
-const CreateRestourant = ({showHide, h, setShowHide, setReRender, reRender}) => {
+const CreateRestourant = ({ setShow, setNotification, showHide, h, setShowHide, setReRender, reRender }) => {
     const handleSubmit = event => {
         event.preventDefault();
-    
+
 
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/restourants", {
-            method: 'POST', 
+            method: 'POST',
             headers: h,
-            
+
             body: JSON.stringify(
                 {
                     "title": event.target.title.value,
@@ -22,67 +22,70 @@ const CreateRestourant = ({showHide, h, setShowHide, setReRender, reRender}) => 
             if (response.status === 201) {
                 setShowHide(false);
                 setReRender(!reRender);
-                
+                setShow(true);
+                setNotification({text:'Restourant' + event.target.title.value + ' was added successfully', status:'success'})
+                event.target.reset();
+
             }
         })
             .catch(error => {
                 console.log(error)
             })
     }
-    return ( 
+    return (
 
         <div style={showHide === true ? { display: 'flex' } : { display: 'none' }} className="align-items-center justify-content-center">
-<div className="col-md-4">
-    <div className="card">
-        <div className="card-header">Add a new Restourant:</div>
-        <div className="card-body">
+            <div className="col-md-4">
+                <div className="card">
+                    <div className="card-header">Add a new Restourant:</div>
+                    <div className="card-body">
 
 
 
-            <form onSubmit={handleSubmit}>
+                        <form onSubmit={handleSubmit}>
 
-                <div className="form-group">
-                    <label>Restourant Title: </label>
-                    <input
-                        type="text"
-                        name="title"
-                        className="form-control"
+                            <div className="form-group">
+                                <label>Restourant Title: </label>
+                                <input
+                                    type="text"
+                                    name="title"
+                                    className="form-control"
 
-                    />
+                                />
+                            </div>
+
+                            <div className="form-group">
+                                <label>Restourant Code</label>
+                                <input
+                                    type="text"
+                                    name="code"
+                                    className="form-control"
+                                />
+                            </div>
+                            <div className="form-group">
+                                <label>Address </label>
+                                <input
+                                    type="text"
+                                    name="address"
+                                    className="form-control"
+                                />
+
+                            </div>
+
+                            <button type="submit"
+                                className="btn btn-primary">Submit</button>
+                        </form>
+                        <button onClick={(e) => setShowHide(false)} className="btn btn-dark">Cancel</button>
+                    </div>
                 </div>
-
-                <div className="form-group">
-                    <label>Restourant Code</label>
-                    <input
-                        type="text"
-                        name="code"
-                        className="form-control"
-                    />
-                </div>
-                <div className="form-group">
-                    <label>Address </label>
-                    <input
-                        type="text"
-                        name="address"
-                        className="form-control"
-                    />
-
-                </div>
-              
-                <button type="submit"
-                    className="btn btn-primary">Submit</button>
-            </form>
-            <button onClick={(e) => setShowHide(false)} className="btn btn-dark">Cancel</button>
+            </div>
         </div>
-    </div>
-</div>
-</div>
 
 
 
-     );
+    );
 }
- 
+
 export default CreateRestourant;
 
 

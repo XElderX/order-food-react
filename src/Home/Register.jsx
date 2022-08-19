@@ -2,8 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from './register.module.css';
 
-const Register = () => {
-    const [notification, setNotification] = useState('');
+const Register = ({setNotification, notification, setShow, show}) => {
+    
     const nav = useNavigate();
 
 

@@ -7,25 +7,23 @@ import EditMenuDish from "./MenuDishes/EditMenuDish";
 import DishIndex from "./MenuDishes/DishIndex";
 import Loader from "../Loader/Loader";
 
-const Menus = ({addIntoCart}) => {
+const Menus = ({ addIntoCart, setNotification, notification, setShow, show }) => {
 
     const [error, setError] = useState(null);
 
     const [isLoaded, setIsLoaded] = useState(false);
     const [menus, setMenus] = useState([]);
     const [editMode, setEditMode] = useState(false);
-    
+
     const [showHide, setShowHide] = useState(false);
     const [reRender, setReRender] = useState(false);
     const [currentMenu, setCurrentMenu] = useState([]);
-    
+
     const [hideDishes, setHideDishes] = useState(false);
     const [menuDishes, setMenuDishes] = useState([]);
     const [menuId, setMenuId] = useState('');
     const [currentMenuDish, setCurrentMenuDish] = useState("");
     const [sort, setSort] = useState(null);
-
-
 
     const [defaultMenuDishes, setDefaultMenuDishes] = useState([]);
 
@@ -52,29 +50,23 @@ const Menus = ({addIntoCart}) => {
                 (error) => { setError(error); setIsLoaded(true); })
     }, [reRender])
 
-   
-    
-
-
     function priceFilter(vals) {
-        if(sort === null){
+        if (sort === null) {
             setSort(true)
-            vals?.sort(function(a, b){return a.price - b.price})
-               
-                // console.log('sort1')
-                setMenuDishes(vals)
-        }else if (sort === true){
+            vals?.sort(function (a, b) { return a.price - b.price })
+
+            // console.log('sort1')
+            setMenuDishes(vals)
+        } else if (sort === true) {
             setSort(false)
-            vals?.sort(function(a, b){return (a.price - b.price)*-1})
-                // console.log('sort 2')
-                setMenuDishes(vals)
+            vals?.sort(function (a, b) { return (a.price - b.price) * -1 })
+            // console.log('sort 2')
+            setMenuDishes(vals)
         }
-        else{
+        else {
             setSort(null);
             // console.log('sort3')
             showAllDishes(menuId)
-            
-            
         }
     }
 
@@ -90,9 +82,6 @@ const Menus = ({addIntoCart}) => {
         }
     }
 
-
-
-    
     function showAllDishes(id, e) {
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/dishes/menu/" + id, { method: 'GET', headers: h })
             .then(res => {
@@ -105,7 +94,7 @@ const Menus = ({addIntoCart}) => {
                 }
             }).then(
                 (result) => {
-                    
+
                     console.log(result);
                     setMenuDishes(result);
                     setDefaultMenuDishes(result)
@@ -115,130 +104,127 @@ const Menus = ({addIntoCart}) => {
                 }
             )
     }
-
-
-
     if (!isLoaded) {
-        return <div>Loading...<Loader /></div>;
+        return <div style={{ textAlign: 'center', margin: '20%' }}>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     } else {
         return (<>
             <div style={hideDishes === true ? { display: 'block' } : { display: 'none' }} className='container'>
-               
-            
+                <h3>Dishes</h3>
+                <div className='container'>
+                <div style={show ? {display:'block', margin:'0.5rem 1rem' } : {display:'none'}} className={'alert alert-' + notification.status}><span>{notification.text}</span></div>
+                    <table className='table'>
+                        <thead>
+                            <tr>
+                                <th>Menu</th>
+                                <th>Dish title</th>
+                                <th>Description</th>
+                                <th style={{ display: 'flex', flexDirection: 'column', alignItems: 'center' }}><span>Price</span><button onClick={(e) => priceFilter(menuDishes)}>
+                                    {(sort === null) ? <span> Sort &darr;</span> : (sort === true) ? <span> Sort &uarr;</span> : <span> Default &harr;</span>}</button></th>
+                                <th>Foto</th>
+                                <th style={editMode === false && showHide !== true ? { display: 'block' } : { display: 'none' }}>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {menuDishes?.length > 0 ? (menuDishes.map(dish => (
+                                <DishIndex key={dish.id}
+                                    id={dish.id}
+                                    menu_title={dish.menu.menu_title}
+                                    dish_name={dish.dish_name}
+                                    description={dish.description}
+                                    price={dish.price}
+                                    foto_url={dish.foto_url}
+                                    error={error}
+                                    setError={setError}
+                                    menuDishes={menuDishes}
+                                    setMenuDishes={setMenuDishes}
+                                    editMode={editMode}
+                                    showHide={showHide}
+                                    setCurrentMenuDish={setCurrentMenuDish}
+                                    setIsLoaded={setIsLoaded}
+                                    setEditMode={setEditMode}
+                                    addIntoCart={addIntoCart}
+                                    setNotification={setNotification}
+                                     setShow={setShow}
+                                />
 
-            <h3>Dishes</h3>
-            <div className='container'>
-                <table className='table'>
-                    <thead>
-                        <tr>
-                            <th>Menu</th>
-                            <th>Dish title</th>
-                            <th>Description</th>
-                            <th style={{display:'flex', flexDirection:'column', alignItems: 'center'}}><span>Price</span><button onClick={(e) =>  priceFilter(menuDishes) }>
-                                {(sort===null) ? <span> Sort &darr;</span> : (sort===true) ?  <span> Sort &uarr;</span> : <span> Default &harr;</span>}</button></th>
-                            <th>Foto</th>
-                            <th style={editMode === false && showHide!==true ? { display: 'block' } : { display: 'none' }}>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {menuDishes?.length > 0 ? (menuDishes.map(dish => (
-                            <DishIndex key={dish.id}
-                                id={dish.id}
-                                menu_title={dish.menu.menu_title}
-                                dish_name={dish.dish_name}
-                                description={dish.description}
-                                price={dish.price}
-                                foto_url={dish.foto_url}
-                                error={error}
-                                setError={setError}
-                                menuDishes={menuDishes}
-                                setMenuDishes={setMenuDishes}
-                                editMode={editMode}
-                                showHide={showHide}
-                                setCurrentMenuDish={setCurrentMenuDish}
-                                setIsLoaded={setIsLoaded}
-                                setEditMode={setEditMode}
-                                addIntoCart={addIntoCart}
-                            />
+                            ))
+                            ) : (
+                                <tr><td>This menu haven't had any dishes yet </td></tr>
+                            )}
+                        </tbody>
+                    </table>
 
-                        ))
-                        ) : (
-                            <tr><td>This menu haven't had any dishes yet </td></tr>
-                        )}
-                    </tbody>
-                </table>
+                    <div className="row justify-content-center">
 
-                <div className="row justify-content-center">
+                        <button style={editMode === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'block', maxWidth: '20%' } : { display: 'none' }} className="btn btn-primary" onClick={(e) => functionShowHide(e)}> {showHide === false ? 'Add new Dish' : 'Hide'}  </button>
 
-                <button style={editMode === false && JSON.parse(localStorage.getItem("admin")) === 1 ? { display: 'block', maxWidth: '20%' } : { display: 'none' }} className="btn btn-primary" onClick={(e) => functionShowHide(e)}> {showHide === false  ? 'Add new Dish' : 'Hide'}  </button>
-                
-                
-                
-                
-                <CreateMenuDish 
-                showHide={showHide}
-                menu_id={menuId}
-                setShowHide={setShowHide}
-                setReRender={setReRender}
-                h={h}
-                reRender={reRender}
-                setError={setError} 
-                setIsLoaded={setIsLoaded}
-                setMenuDishes={setMenuDishes}
-                setSort={setSort}
-                editMode={editMode}
-                
-                />
+                        <CreateMenuDish
+                            showHide={showHide}
+                            menu_id={menuId}
+                            setShowHide={setShowHide}
+                            setReRender={setReRender}
+                            h={h}
+                            reRender={reRender}
+                            setError={setError}
+                            setIsLoaded={setIsLoaded}
+                            setMenuDishes={setMenuDishes}
+                            setSort={setSort}
+                            editMode={editMode}
+                            setNotification={setNotification}
+                            setShow={setShow}
+
+                        />
 
 
+                    </div>
+
+                    <EditMenuDish
+                        editMode={editMode}
+                        menu_id={menuId}
+                        setEditMode={setEditMode}
+                        setReRender={setReRender}
+                        h={h}
+                        reRender={reRender}
+                        setError={setError}
+                        setIsLoaded={setIsLoaded}
+                        setMenuDishes={setMenuDishes}
+                        setSort={setSort}
+                        currentMenuDish={currentMenuDish}
+                        setNotification={setNotification}
+                        setShow={setShow}
+
+
+                    />
+
+                    <button style={showHide === false ? { display: 'inline' } : { display: 'none' }} onClick={(e) => setHideDishes(false)} className="btn btn-dark">Go back</button>
                 </div>
-
-
-               
-                <EditMenuDish
-                editMode={editMode}
-                menu_id={menuId}
-                setEditMode={setEditMode}
-                setReRender={setReRender}
-                h={h}
-                reRender={reRender}
-                setError={setError} 
-                setIsLoaded={setIsLoaded}
-                setMenuDishes={setMenuDishes}
-                setSort={setSort}
-                currentMenuDish={currentMenuDish}
-                
-                
-                />
-
-                <button style={showHide === false ? {display: 'inline'} : {display: 'none'}} onClick={(e) => setHideDishes(false)} className="btn btn-dark">Go back</button>
-            </div>
             </div>
 
 
             <div style={hideDishes === false ? { display: 'block' } : { display: 'none' }} className="container">
-                <Menu 
-                menus={menus}
-                setMenus={setMenus}
-                editMode={editMode}
-                setEditMode={setEditMode}
-                showHide={showHide}
-                setShowHide={setShowHide}
-                showAllDishes={showAllDishes}
-                setError={setError}
-                setIsLoaded={setIsLoaded}
-                setReRender={setReRender}
-                currentMenu={currentMenu}
-                setCurrentMenu={setCurrentMenu}
-                reRender={reRender}
-                token={token}
-                functionShowHide={functionShowHide}
+                <Menu
+                    menus={menus}
+                    setMenus={setMenus}
+                    editMode={editMode}
+                    setEditMode={setEditMode}
+                    showHide={showHide}
+                    setShowHide={setShowHide}
+                    showAllDishes={showAllDishes}
+                    setError={setError}
+                    setIsLoaded={setIsLoaded}
+                    setReRender={setReRender}
+                    currentMenu={currentMenu}
+                    setCurrentMenu={setCurrentMenu}
+                    reRender={reRender}
+                    token={token}
+                    functionShowHide={functionShowHide}
+                    setNotification={setNotification}
+                    setShow={setShow}
+                    show={show}
+                    notification={notification}
                 />
-
-
-
             </div>
         </>
         );

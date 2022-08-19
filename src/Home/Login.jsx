@@ -14,7 +14,7 @@ async function loginUser(credentials) {
     // );
 }
 
-export default function Login({setLogedIn}) {
+export default function Login({ setLogedIn, setNotification, notification, setShow, show }) {
     const [token, setToken] = useState(localStorage.getItem("token"));
     const [email, setEmail] = useState();
     const [password, setPassword] = useState();
@@ -28,18 +28,15 @@ export default function Login({setLogedIn}) {
         event.preventDefault();
         const loginInfo = await loginUser({ email, password });
         console.log(loginInfo);
-       
+
         setToken(loginInfo["authorisation"]["token"]);
         localStorage.setItem('token', loginInfo["authorisation"]["token"]);
         localStorage.setItem('username', loginInfo["user"]["name"]);
         localStorage.setItem('admin', loginInfo["user"]["admin"]);
         localStorage.setItem('user_id', loginInfo["user"]["id"]);
         setLogedIn(true);
-        
-        
-       
-    }
 
+    }
 
     return (
 

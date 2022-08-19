@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import Loader from "../Loader/Loader";
 
-const Dishes = ({dishes, setDishes}) => {
+const Dishes = ({dishes, setDishes, setNotification, notification, setShow, show}) => {
    
     const [error, setError] = useState(null);
 
@@ -64,17 +64,19 @@ const Dishes = ({dishes, setDishes}) => {
                 if (response.status === 200) {
                     const remaining = dishes.filter(d => id !== d.id)
                     setDishes(remaining)
+                    setShow(true);
+                    setNotification({text:'Dish was removed', status:'success'})
                 }
             });
     }
 
     const handleSubmit = event => {
         event.preventDefault();
-        console.log(event.target.menu_id.value)
-        console.log(event.target.dish_name.value)
-        console.log(event.target.description.value)
-        console.log(event.target.price.value)
-        console.log(event.target.foto_url.value)
+        // console.log(event.target.menu_id.value)
+        // console.log(event.target.dish_name.value)
+        // console.log(event.target.description.value)
+        // console.log(event.target.price.value)
+        // console.log(event.target.foto_url.value)
         fetch("https://examorderfoodapp.herokuapp.com/api/v1/dishes", {
             method: 'POST',
             headers: h,
@@ -92,12 +94,18 @@ const Dishes = ({dishes, setDishes}) => {
         }).then(response => {
 
             if (response.status === 201) {
+                event.target.reset();
                 setShowHide(false);
                 setReRender(true);
+                setShow(true);
+                setNotification({text:'Dish ' + event.target.dish_name.value + 'was added successfully', status:'success'})
             }
         })
             .catch(error => {
                 console.log(error)
+                setShow(true);
+                setNotification({text:'Due some error dish wasn\'t added', status:'danger'})
+                
             })
     }
     const handleUpdateSubmit = event => {
@@ -120,14 +128,20 @@ const Dishes = ({dishes, setDishes}) => {
             )
         }).then(response => {
             console.log(response)
+            
 
             if (response.status === 200) {
+                event.target.reset();
                 setReRender(true);
+                setShow(true);
+                setNotification({text:'Dish ' + event.target.dish_name.value + 'details were updated successfully', status:'success'})
 
             }
         })
             .catch(error => {
                 console.log(error)
+                setShow(true);
+                setNotification({text:'Due some error dish ' + event.target.dish_name.value + 'weren\'t updated', status:'danger'})
             })
 
     }
@@ -172,13 +186,12 @@ const Dishes = ({dishes, setDishes}) => {
 
 
     if (!isLoaded) {
-        return <div>Loading...<Loader /></div>;
+        return <div style={{textAlign:'center', margin:'20%'}}>Loading...<Loader /></div>;
     } else if (error) {
         return <div>Error: {error.message}</div>;
     } else {
         return (<>
-           
-
+        <div style={show ? {display:'block', margin:'0.5rem 1rem' } : {display:'none'}} className={'alert alert-' + notification.status}><span>{notification.text}</span></div>
             <div style={hideDishes === false ? { display: 'block' } : { display: 'none' }} className="container">
                 <table className="table">
                     <thead>
@@ -345,9 +358,7 @@ const Dishes = ({dishes, setDishes}) => {
                     </div>
                 </div>
             </div>
-        </>)
-  
-                                                }
+        </>)}
 }
  
 export default Dishes;
